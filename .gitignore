@@ -4,6 +4,8 @@
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
+# Exception : le build WebGL pour GitHub Pages
+!docs/Build/
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
 *.pidb
