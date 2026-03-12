@@ -606,7 +606,7 @@ public class SceneBuilder : MonoBehaviour
         tmp.fontSize = 36;
         tmp.color = TEXT;
         tmp.alignment = TextAlignmentOptions.Center;
-        tmp.fontStyle = FontStyles.SemiBold;
+        tmp.fontStyle = FontStyles.Normal;
         tmp.enableWordWrapping = false;
         if (_fontSemiBold != null) tmp.font = _fontSemiBold;
         Stretch(tmp.GetComponent<RectTransform>());
@@ -668,7 +668,7 @@ public class SceneBuilder : MonoBehaviour
         // Police Poppins selon le style
         if ((style & FontStyles.Bold) != 0 && _fontBold != null)
             tmp.font = _fontBold;
-        else if ((style & FontStyles.SemiBold) != 0 && _fontSemiBold != null)
+        else if (style == FontStyles.Normal && _fontSemiBold != null)
             tmp.font = _fontSemiBold;
         else if (_fontRegular != null)
             tmp.font = _fontRegular;
