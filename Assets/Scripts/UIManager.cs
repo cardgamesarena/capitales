@@ -50,7 +50,6 @@ public class UIManager : MonoBehaviour
     {
         SetupDropdown();
         SetupButtons();
-        HideAll();
     }
 
     void SetupDropdown()

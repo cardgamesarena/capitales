@@ -81,7 +81,7 @@ public class BuildScript
     static void CreateAndSaveScene()
     {
         var scene = UnityEditor.SceneManagement.EditorSceneManager.NewScene(
-            UnityEditor.SceneManagement.NewSceneSetup.EmptyScene,
+            UnityEditor.SceneManagement.NewSceneSetup.DefaultGameObjects,
             UnityEditor.SceneManagement.NewSceneMode.Single);
 
         SceneBuilder.BuildScene();
