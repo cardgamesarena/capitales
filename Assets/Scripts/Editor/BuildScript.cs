@@ -42,11 +42,20 @@ public class BuildScript
     // Appelé en ligne de commande : Unity -batchmode -executeMethod BuildScript.BuildWebGLCLI
     public static void BuildWebGLCLI()
     {
-        // S'assurer que la scène existe
-        if (!System.IO.File.Exists("Assets/Scenes/Main.unity"))
+        // 1. Importer les TMP Essential Resources si absent (police LiberationSans SDF)
+        if (!System.IO.Directory.Exists("Assets/TextMesh Pro"))
         {
-            CreateAndSaveScene();
+            string tmpPkg = "Packages/com.unity.textmeshpro/Package Resources/TMP Essential Resources.unitypackage";
+            if (System.IO.File.Exists(tmpPkg))
+            {
+                AssetDatabase.ImportPackage(tmpPkg, false);
+                AssetDatabase.Refresh();
+                Debug.Log("[Build] TMP Essential Resources importées.");
+            }
         }
+
+        // 2. Toujours recréer la scène pour s'assurer qu'elle est à jour
+        CreateAndSaveScene();
 
         string buildPath = System.IO.Path.GetFullPath("docs");
         System.IO.Directory.CreateDirectory(buildPath);
