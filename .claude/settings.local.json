@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"/c/Users/belkh/projets/unity/test/Assets/Scripts\"\nmkdir -p \"/c/Users/belkh/projets/unity/test/Assets/Data\"\nmkdir -p \"/c/Users/belkh/projets/unity/test/Assets/Scenes\"\necho \"Folders created\")"
+    ]
+  }
+}
