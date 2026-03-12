@@ -39,10 +39,10 @@ public class UIManager : MonoBehaviour
     public Button btnResultStats;
 
     [Header("Couleurs")]
-    public Color colorCorrect = new Color(0.2f, 0.8f, 0.3f);
-    public Color colorWrong = new Color(0.9f, 0.2f, 0.2f);
-    public Color colorNeutral = new Color(0.3f, 0.5f, 0.9f);
-    public Color colorDisabled = new Color(0.6f, 0.6f, 0.6f);
+    public Color colorCorrect  = new Color(0.063f, 0.725f, 0.506f);  // #10B981 emeraude
+    public Color colorWrong    = new Color(0.937f, 0.267f, 0.267f);  // #EF4444 rouge
+    public Color colorNeutral  = new Color(0.22f, 0.18f, 0.55f, 1f); // indigo foncé
+    public Color colorDisabled = new Color(0.15f, 0.18f, 0.28f, 1f); // sombre
 
     private string[] continents = { "Tous", "Europe", "Amérique", "Asie", "Afrique", "Océanie" };
 
@@ -95,19 +95,20 @@ public class UIManager : MonoBehaviour
         HideAll();
         if (panelStats) panelStats.SetActive(true);
 
-        if (txtStatsTitle) txtStatsTitle.text = "Capitales du Monde";
-        if (txtStatsMastered) txtStatsMastered.text = $"Maîtrisées : <b>{mastered}</b>";
-        if (txtStatsLearning) txtStatsLearning.text = $"En apprentissage : <b>{learning}</b>";
-        if (txtStatsNew) txtStatsNew.text = $"Nouvelles : <b>{newCards}</b>";
+        if (txtStatsTitle) txtStatsTitle.text = "🌍  Capitales du Monde";
+        // Stat cards : afficher juste le nombre (le label est fixe dans la carte)
+        if (txtStatsMastered) txtStatsMastered.text = mastered.ToString();
+        if (txtStatsLearning) txtStatsLearning.text = learning.ToString();
+        if (txtStatsNew) txtStatsNew.text = newCards.ToString();
 
         string sessionText = sessionTotal > 0
-            ? $"Session : {sessionScore}/{sessionTotal} ({Mathf.RoundToInt(100f * sessionScore / sessionTotal)}%)"
+            ? $"Session : {sessionScore}/{sessionTotal}  ({Mathf.RoundToInt(100f * sessionScore / sessionTotal)}%)"
             : "Session : --";
         if (txtStatsSession) txtStatsSession.text = sessionText;
 
         float progress = total > 0 ? (float)mastered / total : 0f;
         if (sliderProgress) sliderProgress.value = progress;
-        if (txtProgressBar) txtProgressBar.text = $"{Mathf.RoundToInt(progress * 100)}% maîtrisé";
+        if (txtProgressBar) txtProgressBar.text = $"{Mathf.RoundToInt(progress * 100)}%";
     }
 
     public void ShowQuestion(string country, List<string> choices)
@@ -115,15 +116,17 @@ public class UIManager : MonoBehaviour
         HideAll();
         if (panelQuestion) panelQuestion.SetActive(true);
 
-        if (txtQuestion) txtQuestion.text = $"Quelle est la capitale de\n<b>{country}</b> ?";
+        // "Quelle est la capitale de" est affiché par TxtSub (statique dans la carte)
+        if (txtQuestion) txtQuestion.text = country;
 
         var record = QuizManager.Instance.GetCurrentCardRecord();
         if (txtProgress && record != null)
         {
-            string due = record.totalAsked == 0 ? "Nouveau" :
-                record.IsDue ? "En retard" :
-                $"Prochain dans {record.intervalDays}j";
-            txtProgress.text = $"{due}  |  Réussi {Mathf.RoundToInt(record.SuccessRate * 100)}%";
+            string badge = record.totalAsked == 0 ? "🆕 Nouveau" :
+                record.IsDue ? "⏰ En retard" :
+                $"📅 Prochain dans {record.intervalDays}j";
+            string pct = record.totalAsked > 0 ? $"  ·  ✓ {Mathf.RoundToInt(record.SuccessRate * 100)}%" : "";
+            txtProgress.text = badge + pct;
         }
 
         for (int i = 0; i < choiceButtons.Count; i++)
@@ -176,28 +179,38 @@ public class UIManager : MonoBehaviour
 
         if (txtResultTitle)
         {
-            txtResultTitle.text = correct ? "Correct !" : "Incorrect";
+            txtResultTitle.text  = correct ? "✓" : "✗";
             txtResultTitle.color = correct ? colorCorrect : colorWrong;
         }
-        if (txtResultCountry) txtResultCountry.text = country;
-        if (txtResultCorrect) txtResultCorrect.text = $"Capitale : <b>{capital}</b>";
+        if (txtResultCountry) txtResultCountry.text = correct ? $"Bravo !  {country}" : country;
+        if (txtResultCorrect) txtResultCorrect.text = correct
+            ? $"Capitale : <b>{capital}</b>"
+            : $"La bonne réponse était : <b>{capital}</b>";
 
         var record = SpacedRepetitionSystem.GetOrCreateCard(country);
         if (txtResultInfo)
         {
             string nextReview = record.intervalDays <= 1 ? "demain" : $"dans {record.intervalDays} jours";
-            txtResultInfo.text = $"Prochaine révision {nextReview}\n" +
-                                 $"Réussi {record.totalCorrect}/{record.totalAsked} fois";
+            txtResultInfo.text = $"📅 Prochaine révision {nextReview}\n" +
+                                 $"📊 Score : {record.totalCorrect}/{record.totalAsked} " +
+                                 $"({Mathf.RoundToInt(record.SuccessRate * 100)}%)";
         }
     }
 
     void SetButtonColor(Button btn, Color color)
     {
+        var img = btn.GetComponent<UnityEngine.UI.Image>();
+        if (img) img.color = color;
+
         var colors = btn.colors;
-        colors.normalColor = color;
-        colors.highlightedColor = color * 1.1f;
-        colors.pressedColor = color * 0.9f;
+        colors.normalColor      = color;
+        colors.highlightedColor = new Color(
+            Mathf.Min(color.r + 0.1f, 1f),
+            Mathf.Min(color.g + 0.1f, 1f),
+            Mathf.Min(color.b + 0.1f, 1f), 1f);
+        colors.pressedColor  = color * 0.85f;
         colors.disabledColor = colorDisabled;
+        colors.fadeDuration  = 0.08f;
         btn.colors = colors;
     }
 }
