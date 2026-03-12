@@ -22,8 +22,10 @@ public class SceneBuilder : MonoBehaviour
         var canvasGO = new GameObject("Canvas");
         var canvas = canvasGO.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvasGO.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        ((CanvasScaler)canvasGO.GetComponent<CanvasScaler>()).referenceResolution = new Vector2(1080, 1920);
+        var scaler = canvasGO.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1080, 1920);
+        scaler.matchWidthOrHeight = 0.5f; // équilibre width/height pour toutes résolutions
         canvasGO.AddComponent<GraphicRaycaster>();
 
         // ── Fond ────────────────────────────────────────────────────────────
@@ -100,27 +102,27 @@ public class SceneBuilder : MonoBehaviour
         r.root = CreatePanel(parent, "PanelStats", new Color(0.1f, 0.13f, 0.22f, 0.95f));
 
         var vl = r.root.AddComponent<VerticalLayoutGroup>();
-        vl.padding = new RectOffset(60, 60, 80, 80);
-        vl.spacing = 30;
+        vl.padding = new RectOffset(60, 60, 50, 50);
+        vl.spacing = 20;
         vl.childAlignment = TextAnchor.UpperCenter;
         vl.childForceExpandWidth = true;
         vl.childForceExpandHeight = false;
 
-        r.title    = CreateTMP(r.root.transform, "TxtTitle", "Capitales du Monde", 52, FontStyle.Bold, Color.white);
-        r.mastered = CreateTMP(r.root.transform, "TxtMastered", "Maîtrisées : 0", 36, FontStyle.Normal, new Color(0.2f, 0.9f, 0.4f));
-        r.learning = CreateTMP(r.root.transform, "TxtLearning", "En apprentissage : 0", 36, FontStyle.Normal, new Color(1f, 0.8f, 0.2f));
-        r.newCards = CreateTMP(r.root.transform, "TxtNew", "Nouvelles : 0", 36, FontStyle.Normal, new Color(0.5f, 0.7f, 1f));
-        r.session  = CreateTMP(r.root.transform, "TxtSession", "Session : --", 32, FontStyle.Normal, Color.white);
+        r.title    = CreateTMP(r.root.transform, "TxtTitle", "Capitales du Monde", 48, FontStyle.Bold, Color.white);
+        r.mastered = CreateTMP(r.root.transform, "TxtMastered", "Maîtrisées : 0", 32, FontStyle.Normal, new Color(0.2f, 0.9f, 0.4f));
+        r.learning = CreateTMP(r.root.transform, "TxtLearning", "En apprentissage : 0", 32, FontStyle.Normal, new Color(1f, 0.8f, 0.2f));
+        r.newCards = CreateTMP(r.root.transform, "TxtNew", "Nouvelles : 0", 32, FontStyle.Normal, new Color(0.5f, 0.7f, 1f));
+        r.session  = CreateTMP(r.root.transform, "TxtSession", "Session : --", 28, FontStyle.Normal, Color.white);
 
         // Slider de progression
         r.slider = CreateSlider(r.root.transform, "SliderProgress");
-        r.progressLabel = CreateTMP(r.root.transform, "TxtProgress", "0% maîtrisé", 28, FontStyle.Normal, Color.gray);
+        r.progressLabel = CreateTMP(r.root.transform, "TxtProgress", "0% maîtrisé", 24, FontStyle.Normal, Color.gray);
 
         // Dropdown continent
         r.dropdown = CreateDropdown(r.root.transform, "DropdownContinent");
 
-        r.btnStart = CreateButton(r.root.transform, "BtnStart", "Commencer", new Color(0.2f, 0.5f, 1f));
-        r.btnReset = CreateButton(r.root.transform, "BtnReset", "Réinitialiser", new Color(0.7f, 0.2f, 0.2f));
+        r.btnStart = CreateButton(r.root.transform, "BtnStart", "▶  Commencer", new Color(0.2f, 0.5f, 1f));
+        r.btnReset = CreateButton(r.root.transform, "BtnReset", "Réinitialiser", new Color(0.5f, 0.15f, 0.15f));
 
         return r;
     }
@@ -278,8 +280,8 @@ public class SceneBuilder : MonoBehaviour
         SetStretch(tmp.GetComponent<RectTransform>());
 
         var le = go.AddComponent<LayoutElement>();
-        le.minHeight = 90;
-        le.preferredHeight = 100;
+        le.minHeight = 70;
+        le.preferredHeight = 80;
 
         return btn;
     }
@@ -314,8 +316,8 @@ public class SceneBuilder : MonoBehaviour
         slider.value = 0;
 
         var le = go.AddComponent<LayoutElement>();
-        le.minHeight = 30;
-        le.preferredHeight = 30;
+        le.minHeight = 20;
+        le.preferredHeight = 20;
 
         return slider;
     }
@@ -339,8 +341,8 @@ public class SceneBuilder : MonoBehaviour
         dd.captionText = labelTMP;
 
         var le = go.AddComponent<LayoutElement>();
-        le.minHeight = 80;
-        le.preferredHeight = 80;
+        le.minHeight = 65;
+        le.preferredHeight = 65;
 
         return dd;
     }
