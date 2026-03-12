@@ -8,7 +8,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Outil éditeur : crée automatiquement toute la scène UI du quiz.
 /// Menu : Tools > Build Quiz Scene
-/// Design : Modern Dark Theme avec Poppins
+/// Design : Modern Dark Theme
 /// </summary>
 public class SceneBuilder : MonoBehaviour
 {
@@ -46,40 +46,7 @@ public class SceneBuilder : MonoBehaviour
     static Sprite RoundRect =>
         AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
 
-    // ──────────────────────────────────────────────
-    // FONTS
-    // ──────────────────────────────────────────────
-    static TMP_FontAsset _fontRegular;
-    static TMP_FontAsset _fontBold;
-    static TMP_FontAsset _fontSemiBold;
-
-    static void LoadFonts()
-    {
-        _fontRegular  = LoadOrCreateFont("Assets/Fonts/Poppins-Regular.ttf",  "Assets/Fonts/Poppins-Regular SDF.asset");
-        _fontSemiBold = LoadOrCreateFont("Assets/Fonts/Poppins-SemiBold.ttf", "Assets/Fonts/Poppins-SemiBold SDF.asset");
-        _fontBold     = LoadOrCreateFont("Assets/Fonts/Poppins-Bold.ttf",     "Assets/Fonts/Poppins-Bold SDF.asset");
-        if (_fontBold == null) _fontBold = _fontSemiBold ?? _fontRegular;
-        if (_fontSemiBold == null) _fontSemiBold = _fontBold ?? _fontRegular;
-    }
-
-    static TMP_FontAsset LoadOrCreateFont(string ttfPath, string assetPath)
-    {
-        var existing = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(assetPath);
-        if (existing != null) return existing;
-        var ttf = AssetDatabase.LoadAssetAtPath<Font>(ttfPath);
-        if (ttf == null) return null;
-        var fa = TMP_FontAsset.CreateFontAsset(ttf);
-        if (fa == null) return null;
-        AssetDatabase.CreateAsset(fa, assetPath);
-        AssetDatabase.SaveAssets();
-        return fa;
-    }
-
-    static TMP_FontAsset FontFor(FontStyles style)
-    {
-        if ((style & FontStyles.Bold) != 0) return _fontBold;
-        return _fontRegular;
-    }
+    // Pas de font custom : on utilise LiberationSans SDF (TMP default, seul fiable en batch WebGL)
 
     // ──────────────────────────────────────────────
     // ENTRY POINT
@@ -87,8 +54,6 @@ public class SceneBuilder : MonoBehaviour
     [MenuItem("Tools/Build Quiz Scene")]
     public static void BuildScene()
     {
-        LoadFonts();
-
         foreach (var go in Object.FindObjectsOfType<GameObject>())
             if (go.transform.parent == null && go.name != "Main Camera")
                 Object.DestroyImmediate(go);
@@ -608,7 +573,6 @@ public class SceneBuilder : MonoBehaviour
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.fontStyle = FontStyles.Normal;
         tmp.enableWordWrapping = false;
-        if (_fontSemiBold != null) tmp.font = _fontSemiBold;
         Stretch(tmp.GetComponent<RectTransform>());
 
         return btn;
@@ -647,7 +611,6 @@ public class SceneBuilder : MonoBehaviour
         tmp.color = TEXT;
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.fontStyle = FontStyles.Bold;
-        if (_fontBold != null) tmp.font = _fontBold;
         Stretch(tmp.GetComponent<RectTransform>());
 
         return btn;
@@ -664,14 +627,6 @@ public class SceneBuilder : MonoBehaviour
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.fontStyle = style;
         tmp.enableWordWrapping = true;
-
-        // Police Poppins selon le style
-        if ((style & FontStyles.Bold) != 0 && _fontBold != null)
-            tmp.font = _fontBold;
-        else if (style == FontStyles.Normal && _fontSemiBold != null)
-            tmp.font = _fontSemiBold;
-        else if (_fontRegular != null)
-            tmp.font = _fontRegular;
 
         var le = go.AddComponent<LayoutElement>();
         le.minHeight = size * 1.4f;
@@ -739,7 +694,6 @@ public class SceneBuilder : MonoBehaviour
         labelTMP.fontSize = 30;
         labelTMP.color = TEXT3;
         labelTMP.alignment = TextAlignmentOptions.Center;
-        if (_fontRegular != null) labelTMP.font = _fontRegular;
         Stretch(labelTMP.GetComponent<RectTransform>());
         dd.captionText = labelTMP;
 
